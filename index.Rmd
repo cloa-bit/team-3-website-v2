@@ -1,0 +1,166 @@
+---
+title: "Final Project on Use of Force by Minneapolis Police"
+author: "Cameron, Changhan, Chris, Sejeong"
+date: "6/5/2020"
+output:
+  html_document:
+    code_folding: hide
+    toc: true
+    toc_depth: 2
+    toc_float: true
+    df_print: kable
+---
+
+
+```{r setup, include=FALSE, echo=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r echo=FALSE}
+#setwd("/cloud/project/Day4_FinalProject")
+police = read.csv("Police_Use_of_Force.csv")
+```
+
+
+```{r echo=FALSE}
+library(tidyverse)
+library(ggplot2)
+```
+
+
+```{r echo=FALSE}
+police %>%
+  group_by(Race) %>%
+  summarize(n=n()) %>%
+  arrange(desc(n)) %>%
+  slice(1:5) %>%
+  ggplot() +
+    geom_col(aes(x = reorder(Race, -n), y = n)) +
+    theme(axis.text.x = element_text(angle = 45, vjust = .5)) +
+    labs(x = "Race", y = "Incidents")
+
+```
+
+Something imporant to keep in mind is that **only 18.6% of the population of Minneapolis is black** ^["U.S. Census website". United States Census Bureau. October 5, 2010.]. Let's break it down by nieghborhood.
+
+
+```{r echo=FALSE}
+police %>%
+  group_by(Neighborhood) %>%
+  summarize(n=n()) %>%
+  arrange(desc(n)) %>%
+  slice(1:10) %>%
+  ggplot() +
+    geom_col(aes(x = reorder(Neighborhood, -n), y = n)) +
+    theme(axis.text.x = element_text(angle = 45, vjust = .5)) +
+    labs(x = "Neighborhood", y = "Incidents")
+
+```
+
+
+
+```{r echo=FALSE}
+police %>%
+  group_by(Problem) %>%
+  summarize(n=n()) %>%
+  arrange(desc(n)) %>%
+  slice(1:5) %>%
+  ggplot() +
+    geom_col(aes(x = reorder(Problem, -n), y = n)) +
+    theme(axis.text.x = element_text(angle = 45, vjust = .5)) +
+    labs(x = "Problem", y = "Incidents")
+```
+
+
+
+```{r echo=FALSE}
+police %>%
+  filter(Neighborhood == "Downtown West") %>%
+  group_by(Problem) %>%
+  summarize(n=n()) %>%
+  arrange(desc(n)) %>%
+  slice(1:5) %>%
+  ggplot() +
+    geom_col(aes(x = reorder(Problem, -n), y = n)) +
+    theme(axis.text.x = element_text(angle = 45, vjust = .5)) +
+    labs(title = "Downtown West", x = "Problem", y = "Incidents")
+```
+
+```{r echo=FALSE}
+police %>%
+  filter(Neighborhood == "Downtown West") %>%
+  group_by(Race) %>%
+  summarize(n=n()) %>%
+  arrange(desc(n)) %>%
+  slice(1:5) %>%
+  ggplot() +
+    geom_col(aes(x = reorder(Race, -n), y = n)) +
+    theme(axis.text.x = element_text(angle = 45, vjust = .5)) +
+    labs(title = "Downtown West", x = "Race", y = "Incidents")
+
+```
+
+Again we see the same trend in Downtown West as we see in all of Minneapolis.
+
+
+```{r echo=FALSE}
+police %>%
+  filter(Neighborhood == "Downtown West", Race %in% c("Black", "White")) %>%
+  ggplot() +
+    geom_bar(aes(x = Race, color = ForceType, fill = ForceType)) +
+    theme(axis.text.x = element_text(angle = 45, vjust = .5)) +
+    labs(title = "Downtown West", x = "Race", y = "Incidents", color = "Force Type", fill = "Force Type")
+```
+
+
+```{r echo=FALSE}
+police %>%
+  filter(Neighborhood == "Downtown West", Race %in% c("Black", "White")) %>%
+  ggplot() +
+    geom_bar(aes(x = Race, color = Is911Call, fill = Is911Call)) +
+    theme(axis.text.x = element_text(angle = 45, vjust = .5)) +
+    labs(title = "Downtown West", x = "Race", y = "Incidents", color = "911 Call", fill = "911 Call")
+```
+
+
+
+```{r echo=FALSE}
+police %>%
+  filter(Neighborhood == "Downtown West", Race %in% c("Black", "White")) %>%
+  ggplot() +
+    geom_bar(aes(x = Race, color = SubjectInjury, fill = SubjectInjury)) +
+    theme(axis.text.x = element_text(angle = 45, vjust = .5)) +
+    labs(title = "Downtown West", x = "Race", y = "Incidents", color = "Subject Injury", fill = "Subject Injury")
+```
+
+```{r echo=FALSE}
+police %>%
+  filter(Neighborhood == "Downtown West", Race %in% c("Black", "White"), ForceType == "Chemical Irritant") %>%
+  ggplot() +
+    geom_bar(aes(x = Race, color = ForceTypeAction, fill = ForceTypeAction)) +
+    theme(axis.text.x = element_text(angle = 45, vjust = .5)) +
+    labs(x = "Race", y = "Incidents", color = "Force Type Action", fill = "Force Type Action")
+```
+
+
+
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+```{r cars}
+summary(cars)
+```
+
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r pressure, echo=FALSE}
+plot(pressure)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
