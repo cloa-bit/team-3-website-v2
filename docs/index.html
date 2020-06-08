@@ -475,11 +475,13 @@ div.tocify {
 <pre><code>## ── Conflicts ───────────────────────────────── tidyverse_conflicts() ──
 ## x dplyr::filter() masks stats::filter()
 ## x dplyr::lag()    masks stats::lag()</code></pre>
+<p>Police brutality has long been an issue in the United States. The recent killing of George Floyd has again cast a spotlight on policing practices in America. We decided to study data on the use of force by police in Minneapolis. Breaking it down by race we have the following.</p>
 <pre><code>## `summarise()` ungrouping output (override with `.groups` argument)</code></pre>
 <p><img src="index_files/figure-html/unnamed-chunk-3-1.png" width="672" /></p>
-<p>Something imporant to keep in mind is that <strong>only 18.6% of the population of Minneapolis is black</strong> <a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a>. Let’s break it down by nieghborhood.</p>
+<p>Something imporant to keep in mind is that <strong>only 18.6% of the population of Minneapolis is black</strong> <a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a>. So it’s obvious that a African Americans are disproportionately targeted by the police. Let’s break it down by nieghborhood</p>
 <pre><code>## `summarise()` ungrouping output (override with `.groups` argument)</code></pre>
 <p><img src="index_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
+<p>So the majority of cases take place in the Downtown West neighborhood of Minneapolis, the heart of the city. The following graphic breaks down the cases by the problem.</p>
 <pre><code>## `summarise()` ungrouping output (override with `.groups` argument)</code></pre>
 <p><img src="index_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
 <pre><code>## `summarise()` ungrouping output (override with `.groups` argument)</code></pre>
@@ -491,25 +493,93 @@ div.tocify {
 <p><img src="index_files/figure-html/unnamed-chunk-9-1.png" width="672" /></p>
 <p><img src="index_files/figure-html/unnamed-chunk-10-1.png" width="672" /></p>
 <p><img src="index_files/figure-html/unnamed-chunk-11-1.png" width="672" /></p>
-<div id="r-markdown" class="section level2">
-<h2>R Markdown</h2>
-<p>This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <a href="http://rmarkdown.rstudio.com" class="uri">http://rmarkdown.rstudio.com</a>.</p>
-<p>When you click the <strong>Knit</strong> button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:</p>
-<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb9-1" data-line-number="1"><span class="kw">summary</span>(cars)</a></code></pre></div>
-<pre><code>##      speed           dist       
-##  Min.   : 4.0   Min.   :  2.00  
-##  1st Qu.:12.0   1st Qu.: 26.00  
-##  Median :15.0   Median : 36.00  
-##  Mean   :15.4   Mean   : 42.98  
-##  3rd Qu.:19.0   3rd Qu.: 56.00  
-##  Max.   :25.0   Max.   :120.00</code></pre>
-</div>
-<div id="including-plots" class="section level2">
-<h2>Including Plots</h2>
-<p>You can also embed plots, for example:</p>
-<p><img src="index_files/figure-html/pressure-1.png" width="672" /></p>
-<p>Note that the <code>echo = FALSE</code> parameter was added to the code chunk to prevent printing of the R code that generated the plot.</p>
-</div>
+<p>Cameron’s code</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb9-1" data-line-number="1">police <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb9-2" data-line-number="2"><span class="st">  </span><span class="kw">filter</span>(Race <span class="op">%in%</span><span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;Black&quot;</span>, <span class="st">&quot;White&quot;</span>)) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb9-3" data-line-number="3"><span class="st">  </span><span class="kw">ggplot</span>() <span class="op">+</span></a>
+<a class="sourceLine" id="cb9-4" data-line-number="4"><span class="st">    </span><span class="kw">geom_bar</span>(<span class="kw">aes</span>(<span class="dt">x =</span> Race, <span class="dt">color =</span> SubjectInjury, <span class="dt">fill =</span> SubjectInjury)) <span class="op">+</span></a>
+<a class="sourceLine" id="cb9-5" data-line-number="5"><span class="st">    </span><span class="kw">theme</span>(<span class="dt">axis.text.x =</span> <span class="kw">element_text</span>(<span class="dt">angle =</span> <span class="dv">45</span>, <span class="dt">vjust =</span> <span class="fl">.5</span>)) <span class="op">+</span></a>
+<a class="sourceLine" id="cb9-6" data-line-number="6"><span class="st">    </span><span class="kw">labs</span>(<span class="dt">x =</span> <span class="st">&quot;Race&quot;</span>, <span class="dt">y =</span> <span class="st">&quot;Cases&quot;</span>, <span class="dt">color =</span> <span class="st">&quot;Injury&quot;</span>, <span class="dt">fill =</span> <span class="st">&quot;Injury&quot;</span>)</a></code></pre></div>
+<p><img src="index_files/figure-html/unnamed-chunk-12-1.png" width="672" /></p>
+<p>Changhan’s code.</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb10-1" data-line-number="1">police_nested =</a>
+<a class="sourceLine" id="cb10-2" data-line-number="2">police <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb10-3" data-line-number="3"><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">ResponseYr =</span> <span class="kw">substr</span>(ResponseDate, <span class="dv">1</span>, <span class="dv">4</span>)) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb10-4" data-line-number="4"><span class="st">  </span><span class="kw">group_by</span>(ResponseYr) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb10-5" data-line-number="5"><span class="st">  </span><span class="kw">nest</span>()</a>
+<a class="sourceLine" id="cb10-6" data-line-number="6">police_nested =<span class="st"> </span>police_nested[<span class="dv">1</span><span class="op">:</span><span class="dv">11</span>,]</a>
+<a class="sourceLine" id="cb10-7" data-line-number="7">Year &lt;-police_nested<span class="op">$</span>ResponseYr</a>
+<a class="sourceLine" id="cb10-8" data-line-number="8">total_yr &lt;-<span class="st"> </span><span class="kw">data.frame</span>(<span class="dt">Yr =</span> Year , <span class="dt">Case=</span><span class="dv">0</span> , <span class="dt">Male_percent=</span><span class="dv">0</span>, <span class="dt">Black_male_case=</span><span class="dv">0</span>, <span class="dt">Black_male_percent=</span><span class="dv">0</span>)</a>
+<a class="sourceLine" id="cb10-9" data-line-number="9"><span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span><span class="dv">11</span>) {</a>
+<a class="sourceLine" id="cb10-10" data-line-number="10">  total_yr[i,<span class="dv">2</span>] =</a>
+<a class="sourceLine" id="cb10-11" data-line-number="11"><span class="st">    </span>police_nested<span class="op">$</span>data[[i]] <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb10-12" data-line-number="12"><span class="st">    </span><span class="kw">summarise</span>(<span class="dt">n =</span> <span class="kw">n</span>())</a>
+<a class="sourceLine" id="cb10-13" data-line-number="13">  total_yr[i,<span class="dv">3</span>] =</a>
+<a class="sourceLine" id="cb10-14" data-line-number="14"><span class="st">    </span>police_nested<span class="op">$</span>data[[i]] <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb10-15" data-line-number="15"><span class="st">    </span><span class="kw">filter</span>(Sex <span class="op">==</span><span class="st"> &quot;Male&quot;</span>) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb10-16" data-line-number="16"><span class="st">    </span><span class="kw">summarise</span>(<span class="dt">n =</span> <span class="kw">n</span>())</a>
+<a class="sourceLine" id="cb10-17" data-line-number="17">  total_yr[i,<span class="dv">4</span>] =</a>
+<a class="sourceLine" id="cb10-18" data-line-number="18"><span class="st">    </span>police_nested<span class="op">$</span>data[[i]] <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb10-19" data-line-number="19"><span class="st">    </span><span class="kw">filter</span>(Race <span class="op">==</span><span class="st"> &quot;Black&quot;</span> <span class="op">&amp;</span><span class="st"> </span>Sex <span class="op">==</span><span class="st"> &quot;Male&quot;</span>) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb10-20" data-line-number="20"><span class="st">    </span><span class="kw">summarise</span>(<span class="dt">n =</span> <span class="kw">n</span>())</a>
+<a class="sourceLine" id="cb10-21" data-line-number="21">}</a>
+<a class="sourceLine" id="cb10-22" data-line-number="22">total_yr =</a>
+<a class="sourceLine" id="cb10-23" data-line-number="23">total_yr <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb10-24" data-line-number="24"><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">Male_percent=</span><span class="kw">round</span>(((Male_percent<span class="op">/</span>Case)<span class="op">*</span><span class="dv">100</span>),<span class="dv">2</span>), <span class="dt">Black_male_percent=</span><span class="kw">round</span>(((Black_male_case<span class="op">/</span>Case)<span class="op">*</span><span class="dv">100</span>),<span class="dv">2</span>))</a>
+<a class="sourceLine" id="cb10-25" data-line-number="25"><span class="kw">ggplot</span>(<span class="dt">data =</span> total_yr, <span class="dt">mapping =</span> <span class="kw">aes</span>(<span class="dt">x=</span>Year)) <span class="op">+</span></a>
+<a class="sourceLine" id="cb10-26" data-line-number="26"><span class="st">  </span><span class="kw">geom_line</span>(<span class="kw">aes</span>(<span class="dt">y =</span> Black_male_case, <span class="dt">color=</span><span class="st">&quot;Total cases for AA&quot;</span>),<span class="dt">group =</span> <span class="dv">1</span>, <span class="dt">size=</span><span class="fl">0.6</span>) <span class="op">+</span></a>
+<a class="sourceLine" id="cb10-27" data-line-number="27"><span class="st">  </span><span class="kw">geom_line</span>(<span class="kw">aes</span>(<span class="dt">y =</span> Case, <span class="dt">color=</span><span class="st">&quot;Total cases&quot;</span>),<span class="dt">group =</span> <span class="dv">1</span>, <span class="dt">size=</span><span class="fl">0.6</span>) <span class="op">+</span></a>
+<a class="sourceLine" id="cb10-28" data-line-number="28"><span class="st">  </span><span class="kw">scale_colour_manual</span>(<span class="st">&quot;&quot;</span>,</a>
+<a class="sourceLine" id="cb10-29" data-line-number="29">                      <span class="dt">breaks =</span> <span class="kw">c</span>(<span class="st">&quot;Total cases for AA&quot;</span>, <span class="st">&quot;Total cases&quot;</span>),</a>
+<a class="sourceLine" id="cb10-30" data-line-number="30">                      <span class="dt">values =</span> <span class="kw">c</span>(<span class="st">&quot;Blue&quot;</span>,<span class="st">&quot;Red&quot;</span>)) <span class="op">+</span></a>
+<a class="sourceLine" id="cb10-31" data-line-number="31"><span class="st">  </span><span class="kw">geom_point</span>(<span class="kw">aes</span>(<span class="dt">y =</span> Case), <span class="dt">color=</span><span class="st">&quot;Red&quot;</span>, <span class="dt">size=</span><span class="dv">2</span>) <span class="op">+</span></a>
+<a class="sourceLine" id="cb10-32" data-line-number="32"><span class="st">  </span><span class="kw">geom_text</span>(<span class="kw">aes</span>(<span class="dt">y =</span> Case<span class="op">+</span><span class="dv">100</span>, <span class="dt">label =</span> Male_percent), <span class="dt">size =</span> <span class="fl">3.5</span>) <span class="op">+</span></a>
+<a class="sourceLine" id="cb10-33" data-line-number="33"><span class="st">  </span><span class="kw">geom_point</span>(<span class="kw">aes</span>(<span class="dt">y =</span> Black_male_case), <span class="dt">size=</span><span class="dv">2</span>,<span class="dt">color=</span><span class="st">&quot;Blue&quot;</span>) <span class="op">+</span></a>
+<a class="sourceLine" id="cb10-34" data-line-number="34"><span class="st">  </span><span class="kw">geom_text</span>(<span class="kw">aes</span>(<span class="dt">y =</span> Black_male_case<span class="op">+</span><span class="dv">100</span>, <span class="dt">label =</span> Black_male_percent), <span class="dt">size =</span> <span class="fl">3.5</span>) <span class="op">+</span></a>
+<a class="sourceLine" id="cb10-35" data-line-number="35"><span class="st">  </span><span class="kw">xlab</span>(<span class="st">&quot;Year&quot;</span>) <span class="op">+</span><span class="st"> </span><span class="kw">ylab</span>(<span class="st">&quot;Case Numbers&quot;</span>) <span class="op">+</span></a>
+<a class="sourceLine" id="cb10-36" data-line-number="36"><span class="st">  </span><span class="kw">ggtitle</span>(<span class="st">&quot;Case numbers from 2008 and 2018&quot;</span>, <span class="st">&quot;Value on red (blue) dots represents percentage (%) of male (black male) involving in the case.&quot;</span>)</a></code></pre></div>
+<p><img src="index_files/figure-html/unnamed-chunk-13-1.png" width="672" /></p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb11-1" data-line-number="1">Age &lt;-<span class="st"> </span><span class="kw">factor</span>(<span class="dt">x=</span><span class="kw">c</span>(<span class="st">&quot;Younger than 20&quot;</span>, <span class="st">&quot;20 to 40&quot;</span>, <span class="st">&quot;40 to 60&quot;</span>, <span class="st">&quot;Older than 60&quot;</span>),</a>
+<a class="sourceLine" id="cb11-2" data-line-number="2">              <span class="dt">levels=</span><span class="kw">c</span>(<span class="st">&quot;Younger than 20&quot;</span>, <span class="st">&quot;20 to 40&quot;</span>, <span class="st">&quot;40 to 60&quot;</span>, <span class="st">&quot;Older than 60&quot;</span>))</a>
+<a class="sourceLine" id="cb11-3" data-line-number="3"></a>
+<a class="sourceLine" id="cb11-4" data-line-number="4">total_age1 =</a>
+<a class="sourceLine" id="cb11-5" data-line-number="5">police <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb11-6" data-line-number="6"><span class="st">  </span><span class="kw">filter</span>(<span class="dv">0</span><span class="op">&lt;</span>EventAge, EventAge<span class="op">&lt;=</span><span class="dv">20</span>) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb11-7" data-line-number="7"><span class="st">  </span><span class="kw">group_by</span>(Sex) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb11-8" data-line-number="8"><span class="st">  </span><span class="kw">summarise</span>(<span class="dt">n=</span><span class="kw">n</span>())</a></code></pre></div>
+<pre><code>## `summarise()` ungrouping output (override with `.groups` argument)</code></pre>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb13-1" data-line-number="1">total_age2 =</a>
+<a class="sourceLine" id="cb13-2" data-line-number="2">police <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb13-3" data-line-number="3"><span class="st">  </span><span class="kw">filter</span>(<span class="dv">20</span><span class="op">&lt;</span>EventAge, EventAge<span class="op">&lt;=</span><span class="dv">40</span>) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb13-4" data-line-number="4"><span class="st">  </span><span class="kw">group_by</span>(Sex) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb13-5" data-line-number="5"><span class="st">  </span><span class="kw">summarise</span>(<span class="dt">n=</span><span class="kw">n</span>())</a></code></pre></div>
+<pre><code>## `summarise()` ungrouping output (override with `.groups` argument)</code></pre>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb15-1" data-line-number="1">total_age3 =</a>
+<a class="sourceLine" id="cb15-2" data-line-number="2">police <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb15-3" data-line-number="3"><span class="st">  </span><span class="kw">filter</span>(<span class="dv">40</span><span class="op">&lt;</span>EventAge, EventAge<span class="op">&lt;=</span><span class="dv">60</span>) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb15-4" data-line-number="4"><span class="st">  </span><span class="kw">group_by</span>(Sex) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb15-5" data-line-number="5"><span class="st">  </span><span class="kw">summarise</span>(<span class="dt">n=</span><span class="kw">n</span>())</a></code></pre></div>
+<pre><code>## `summarise()` ungrouping output (override with `.groups` argument)</code></pre>
+<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb17-1" data-line-number="1">total_age4 =</a>
+<a class="sourceLine" id="cb17-2" data-line-number="2">police <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb17-3" data-line-number="3"><span class="st">  </span><span class="kw">filter</span>(<span class="dv">60</span><span class="op">&lt;</span>EventAge) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb17-4" data-line-number="4"><span class="st">  </span><span class="kw">group_by</span>(Sex) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb17-5" data-line-number="5"><span class="st">  </span><span class="kw">summarise</span>(<span class="dt">n=</span><span class="kw">n</span>())</a></code></pre></div>
+<pre><code>## `summarise()` ungrouping output (override with `.groups` argument)</code></pre>
+<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb19-1" data-line-number="1">total_age &lt;-<span class="st"> </span><span class="kw">rbind</span>(total_age1,  total_age2,  total_age3,  total_age4)</a>
+<a class="sourceLine" id="cb19-2" data-line-number="2">case_age &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="dv">5625</span>, <span class="dv">18136</span>, <span class="dv">3884</span>, <span class="dv">169</span>)</a>
+<a class="sourceLine" id="cb19-3" data-line-number="3">age_male &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>)</a>
+<a class="sourceLine" id="cb19-4" data-line-number="4">age_male[<span class="dv">1</span>] &lt;-<span class="st"> </span><span class="kw">round</span>(total_age1[<span class="dv">2</span>,<span class="dv">2</span>]<span class="op">/</span>case_age[<span class="dv">1</span>]<span class="op">*</span><span class="dv">100</span>,<span class="dv">2</span>)</a>
+<a class="sourceLine" id="cb19-5" data-line-number="5">age_male[<span class="dv">2</span>] &lt;-<span class="st"> </span><span class="kw">round</span>(total_age2[<span class="dv">2</span>,<span class="dv">2</span>]<span class="op">/</span>case_age[<span class="dv">2</span>]<span class="op">*</span><span class="dv">100</span>,<span class="dv">2</span>)</a>
+<a class="sourceLine" id="cb19-6" data-line-number="6">age_male[<span class="dv">3</span>] &lt;-<span class="st"> </span><span class="kw">round</span>(total_age3[<span class="dv">2</span>,<span class="dv">2</span>]<span class="op">/</span>case_age[<span class="dv">3</span>]<span class="op">*</span><span class="dv">100</span>,<span class="dv">2</span>)</a>
+<a class="sourceLine" id="cb19-7" data-line-number="7">age_male[<span class="dv">4</span>] &lt;-<span class="st"> </span><span class="kw">round</span>(total_age4[<span class="dv">2</span>,<span class="dv">2</span>]<span class="op">/</span>case_age[<span class="dv">4</span>]<span class="op">*</span><span class="dv">100</span>,<span class="dv">2</span>)</a>
+<a class="sourceLine" id="cb19-8" data-line-number="8">data_age &lt;-<span class="st"> </span><span class="kw">data.frame</span>(<span class="dt">Age =</span> Age , <span class="dt">Case=</span>case_age)</a>
+<a class="sourceLine" id="cb19-9" data-line-number="9"><span class="kw">ggplot</span>(<span class="dt">data =</span> data_age, <span class="dt">mapping =</span> <span class="kw">aes</span>(<span class="dt">x =</span> Age, <span class="dt">y =</span> Case, <span class="dt">fill =</span> Age)) <span class="op">+</span></a>
+<a class="sourceLine" id="cb19-10" data-line-number="10"><span class="st">   </span><span class="kw">geom_bar</span>(<span class="dt">stat =</span> <span class="st">&#39;identity&#39;</span>, <span class="dt">position =</span> <span class="st">&#39;stack&#39;</span>) <span class="op">+</span></a>
+<a class="sourceLine" id="cb19-11" data-line-number="11"><span class="st">   </span><span class="kw">geom_text</span>(<span class="kw">aes</span>(<span class="dt">y =</span> Case<span class="op">+</span><span class="dv">500</span>, <span class="dt">label =</span> age_male), <span class="dt">size =</span> <span class="dv">4</span>) <span class="op">+</span></a>
+<a class="sourceLine" id="cb19-12" data-line-number="12"><span class="st">   </span><span class="kw">xlab</span>(<span class="st">&quot;Age&quot;</span>) <span class="op">+</span><span class="st"> </span><span class="kw">ylab</span>(<span class="st">&quot;Case Numbers&quot;</span>) <span class="op">+</span></a>
+<a class="sourceLine" id="cb19-13" data-line-number="13"><span class="st">   </span><span class="kw">ggtitle</span>(<span class="st">&quot;Case numbers for different ages&quot;</span>, <span class="st">&quot;Values represent the percentage (%) of male involving in the case.&quot;</span>)</a></code></pre></div>
+<p><img src="index_files/figure-html/unnamed-chunk-14-1.png" width="672" /></p>
 <div class="footnotes">
 <hr />
 <ol>
