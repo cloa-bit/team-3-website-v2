@@ -177,6 +177,8 @@ police %>%
     theme(axis.text.x = element_text(angle = 45, vjust = .5)) +
     labs(title = "Downtown West", x = "Race", y = "Cases", color = "Force Type Action", fill = "Force Type Action")
 ```
+
+
 So the police are more likely to use stronger crowd control mace on African Americans.
 
 
