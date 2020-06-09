@@ -19,5 +19,5 @@ Comments in HTML are like this!
 Use of force by police data:
 http://opendata.minneapolismn.gov/datasets/police-use-of-force
 
-Minneapolis Census data:
+Minneapolis census data:
 https://www.census.gov/quickfacts/fact/table/minneapoliscityminnesota/PST045219
