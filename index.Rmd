@@ -1,7 +1,7 @@
 ---
 title: "Final Project on Use of Force by Minneapolis Police"
 author: "Cameron, Changhan, Chris, Sejeong"
-date: "6/5/2020"
+date: "6/9/2020"
 output:
   html_document:
     code_folding: hide
