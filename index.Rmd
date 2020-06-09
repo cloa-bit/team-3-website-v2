@@ -28,11 +28,12 @@ library(ggplot2)
 ```
 
 
-Police brutality has long been an issue in the United States. The recent killing of George Floyd has again cast a spotlight on policing practices in America. We decided to study data on the use of force by police in Minneapolis. Breaking it down by race over the entrie data set we have the following.
+Police brutality has long been an issue in the United States. The recent killing of George Floyd has again cast a spotlight on policing practices in America. We decided to study data on the use of force by police in Minneapolis. Breaking it down by race over the entire data set we have the following.
 
 
 ```{r, echo=FALSE, message=FALSE}
 police %>%
+  drop_na() %>%
   group_by(Race) %>%
   summarize(n=n()) %>%
   arrange(desc(n)) %>%
@@ -44,9 +45,9 @@ police %>%
 
 ```
 
-We can also break it down by year.
+We can also break it down by year for black and white people.
 
-```{r echo = FALSE, warning=FALSE}
+```{r echo = FALSE, warning=FALSE, include=FALSE}
 police_nested =
 police %>%
   mutate(ResponseYr = substr(ResponseDate, 1, 4)) %>%
@@ -81,13 +82,14 @@ ggplot(data = total_yr, mapping = aes(x=Year)) +
   geom_text(aes(y = Case+100, label = Male_percent), size = 3.5) +
   geom_point(aes(y = Black_male_case), size=2,color="Blue") +
   geom_text(aes(y = Black_male_case+100, label = Black_male_percent), size = 3.5) +
-  xlab("Year") + ylab("Case Numbers") +
-  ggtitle("Case numbers from 2008 and 2018", "Value on red (blue) dots represent percentage (%) of male (black male).")
+  xlab("Year") + ylab("Cases") +
+  ggtitle("Cases from 2008 and 2018", "Value on red (blue) dots represent percentage (%) of male (black male).")
 ```
 
-And we can also break it down by age.
 
-```{r,  echo = FALSE, message=FALSE}
+
+
+```{r,  echo = FALSE, message=FALSE, include=FALSE}
 Age <- factor(x=c("Younger than 20", "20 to 40", "40 to 60", "Older than 60"),
               levels=c("Younger than 20", "20 to 40", "40 to 60", "Older than 60"))
 
@@ -124,13 +126,153 @@ data_age <- data.frame(Age = Age , Case=case_age)
 ggplot(data = data_age, mapping = aes(x = Age, y = Case, fill = Age)) +
    geom_bar(stat = 'identity', position = 'stack') +
    geom_text(aes(y = Case+500, label = age_male), size = 4) +
-   xlab("Age") + ylab("Case Numbers") +
-   ggtitle("Case numbers for different ages", "Values represent the percentage (%) of male involving in the case.")
+   xlab("Age") + ylab("Cases") +
+   ggtitle("Cases for different ages", "Values represent the percentage (%) of male involving in the case.")
+```
+Bear in mind that **only 19.4% of the population of Minneapolis is black** ^["U.S. Census website". United States Census Bureau. July 1, 2019.], which means that police use force against black people at over 8 times the rate they use it against white people.
+In the following plot, we compare the annual numbers of use-of-force cases for black and white people in Minneapolis.
+```{r echo = FALSE, warning=FALSE, include=FALSE}
+police_nested =
+police %>%
+  mutate(ResponseYr = substr(ResponseDate, 1, 4)) %>%
+  group_by(ResponseYr) %>%
+  nest()
+police_nested = police_nested[1:11,]
+Year <-police_nested$ResponseYr
+total_yr <- data.frame(Yr = Year , Case=0 , Male_percent=0, Black_male_case=0, Black_male_percent=0)
+for (i in 1:11) {
+  total_yr[i,2] =
+    police_nested$data[[i]] %>%
+    summarise(n = n())
+  total_yr[i,3] =
+    police_nested$data[[i]] %>%
+    filter(Sex == "Male") %>%
+    summarise(n = n())
+  total_yr[i,4] =
+    police_nested$data[[i]] %>%
+    filter(Race == "Black" & Sex == "Male") %>%
+    summarise(n = n())
+}
+total_yr =
+total_yr %>%
+  mutate(Male_percent=round(((Male_percent/Case)*100),2), Black_male_percent=round(((Black_male_case/Case)*100),2))
+ggplot(data = total_yr, mapping = aes(x=Year)) +
+  geom_line(aes(y = Black_male_case, color="Total cases for AA"),group = 1, size=0.6) +
+  geom_line(aes(y = Case, color="Total cases"),group = 1, size=0.6) +
+  scale_colour_manual("",
+                      breaks = c("Total cases for AA", "Total cases"),
+                      values = c("Blue","Red")) +
+  geom_point(aes(y = Case), color="Red", size=2) +
+  geom_text(aes(y = Case+100, label = Male_percent), size = 3.5) +
+  geom_point(aes(y = Black_male_case), size=2,color="Blue") +
+  geom_text(aes(y = Black_male_case+100, label = Black_male_percent), size = 3.5) +
+  xlab("Year") + ylab("Cases") +
+  ggtitle("Cases from 2008 and 2018", "Value on red (blue) dots represent percentage (%) of male (black male).")
+```
+```{r}
+police_nested =
+police %>%
+  mutate(ResponseYr = substr(ResponseDate, 1, 4)) %>%
+  group_by(ResponseYr) %>%
+  nest()
+police_nested = police_nested[1:11,]
+Year <-police_nested$ResponseYr
+total_yr <- data.frame(Yr = Year , Cases = 0, Black_cases = 0, White_cases = 0)
+for (i in 1:11) {
+  total_yr[i,2] =
+    police_nested$data[[i]] %>%
+    summarise(n = n())
+  total_yr[i,3] =
+    police_nested$data[[i]] %>%
+    filter(Race == "Black") %>%
+    summarise(n = n())
+  total_yr[i,4] =
+    police_nested$data[[i]] %>%
+    filter(Race == "White") %>%
+    summarise(n = n())
+}
+ggplot(data = total_yr, mapping = aes(x=Year)) +
+  geom_line(aes(y = Black_cases, color="Black Cases"), group = 1, size=0.6) +
+  geom_line(aes(y = White_cases, color="White cases"),group = 1, size=0.6) +
+  scale_colour_manual("",
+                      breaks = c("Black Cases", "White cases"),
+                      values = c("Blue","Red")) +
+  geom_point(aes(y = White_cases), color="Red", size=2) +
+  geom_point(aes(y = Black_cases), size=2,color="Blue") +
+  xlab("Year") + ylab("Cases") +
+  ggtitle("Police Use of Force 2008-2018", "MPD Cases by Race")
+```
+Since the death of George Floyd, this dataset has gotten a lot of attention.  In particular, this NY Times article provides some great graphics about the use-of-force statistics for Minneapolis as a whole:
+https://www.nytimes.com/interactive/2020/06/03/us/minneapolis-police-use-of-force.html
+However, as the following barplot shows, these incidents are not spread evenly over the city.  An enormous number of these police altercations take place in Minneapolis's downtown district:
+```{r, echo=FALSE, message=FALSE}
+police %>%
+  group_by(Neighborhood) %>%
+  summarize(n=n()) %>%
+  arrange(desc(n)) %>%
+  slice(1:10) %>%
+  ggplot() +
+    geom_col(aes(x = reorder(Neighborhood, -n), y = n)) +
+    theme(axis.text.x = element_text(angle = 45, vjust = .5)) +
+    labs(x = "Neighborhood", y = "Cases")
+```
+Focusing on the Downtown West district shows some very distinct trends.
+```{r echo=FALSE}
+police %>%
+  filter(Neighborhood == "Downtown West", Race %in% c("Black", "White")) %>%
+  ggplot() +
+    geom_bar(aes(x = Race, color = Is911Call, fill = Is911Call)) +
+    theme(axis.text.x = element_text(angle = 45, vjust = .5)) +
+    labs(title = "Downtown West", x = "Race", y = "Cases", color = "911 Call", fill = "911 Call")
+```
+```{r echo=FALSE}
+police %>%
+  filter(Neighborhood == "Downtown West", Race %in% c("Black", "White"), ForceType %in% c("Baton", "Bodily Force", "Chemical Irritant", "Firearm", "Gun Point Display", "Improvised Weapon", "Maximal Restraint Technique", "Police K9 Bite", "Taser")) %>%
+  ggplot() +
+    geom_bar(aes(x = Race, color = ForceType, fill = ForceType)) +
+    theme(axis.text.x = element_text(angle = 45, vjust = .5)) +
+    labs(title = "Downtown West", x = "Race", y = "Cases", color = "Force Type", fill = "Force Type")
 ```
 
+```{r,  echo = FALSE, message=FALSE, include=FALSE}
+Age <- factor(x=c("Younger than 20", "20 to 40", "40 to 60", "Older than 60"),
+              levels=c("Younger than 20", "20 to 40", "40 to 60", "Older than 60"))
+total_age1 =
+police %>%
+  filter(0<EventAge, EventAge<=20) %>%
+  group_by(Sex) %>%
+  summarise(n=n())
+total_age2 =
+police %>%
+  filter(20<EventAge, EventAge<=40) %>%
+  group_by(Sex) %>%
+  summarise(n=n())
+total_age3 =
+police %>%
+  filter(40<EventAge, EventAge<=60) %>%
+  group_by(Sex) %>%
+  summarise(n=n())
+total_age4 =
+police %>%
+  filter(60<EventAge) %>%
+  group_by(Sex) %>%
+  summarise(n=n())
+total_age <- rbind(total_age1,  total_age2,  total_age3,  total_age4)
+case_age <- c(5625, 18136, 3884, 169)
+age_male <- c(0, 0, 0, 0)
+age_male[1] <- round(total_age1[2,2]/case_age[1]*100,2)
+age_male[2] <- round(total_age2[2,2]/case_age[2]*100,2)
+age_male[3] <- round(total_age3[2,2]/case_age[3]*100,2)
+age_male[4] <- round(total_age4[2,2]/case_age[4]*100,2)
+data_age <- data.frame(Age = Age , Case=case_age)
+ggplot(data = data_age, mapping = aes(x = Age, y = Case, fill = Age)) +
+   geom_bar(stat = 'identity', position = 'stack') +
+   geom_text(aes(y = Case+500, label = age_male), size = 4) +
+   xlab("Age") + ylab("Cases") +
+   ggtitle("Cases for different ages", "Values represent the percentage (%) of male involving in the case.")
+```
 
-Something imporant to keep in mind is that **only 19.4% of the population of Minneapolis is black** ^["U.S. Census website". United States Census Bureau. July 1, 2019.]. So it's obvious that a African Americans are disproportionately represented in the data. The following graphic breaks down the cases by the problem that instigated the police to use force.
-
+The following graphic breaks down the cases by the problem that instigated the police to use force.
 ```{r, echo=FALSE, message=FALSE}
 police %>%
   group_by(Problem) %>%
@@ -142,6 +284,70 @@ police %>%
     theme(axis.text.x = element_text(angle = 45, vjust = .5)) +
     labs(x = "Problem", y = "Cases")
 ```
+
+Focusing in on chemical irritants we have the following.
+```{r, echo=FALSE}
+police %>%
+  filter(Neighborhood == "Downtown West", Race %in% c("Black", "White"), ForceType == "Chemical Irritant") %>%
+  ggplot() +
+    geom_bar(aes(x = Race, color = ForceTypeAction, fill = ForceTypeAction)) +
+    theme(axis.text.x = element_text(angle = 45, vjust = .5)) +
+    labs(title = "Downtown West", x = "Race", y = "Cases", color = "Force Type Action", fill = "Force Type Action")
+```
+So the police are more likely to use stronger crowd control mace on African Americans. The next graphic is interesting. It shows us whether the police were responding to a 911 call in the first place.
+```{r echo=FALSE}
+police %>%
+  filter(Neighborhood == "Downtown West", Race %in% c("Black", "White")) %>%
+  ggplot() +
+    geom_bar(aes(x = Race, color = Is911Call, fill = Is911Call)) +
+    theme(axis.text.x = element_text(angle = 45, vjust = .5)) +
+    labs(title = "Downtown West", x = "Race", y = "Cases", color = "911 Call", fill = "911 Call")
+```
+Comparing this to the data for all Minneapolis we see that police intervening in non-911 calls with African Americans is a issue particular to Downtown West.
+```{r echo=FALSE}
+police %>%
+  drop_na() %>%
+  filter(Race %in% c("Black", "White"), Is911Call %in% c("No", "Yes")) %>%
+  ggplot() +
+    geom_bar(aes(x = Race, color = Is911Call, fill = Is911Call)) +
+    theme(axis.text.x = element_text(angle = 45, vjust = .5)) +
+    labs(title = "All Minneapolis", x = "Race", y = "Cases", color = "911 Call", fill = "911 Call")
+```
+```{r echo=FALSE, include=FALSE}
+police %>%
+  filter(Neighborhood == "Downtown West", Race %in% c("Black", "White")) %>%
+  ggplot() +
+    geom_bar(aes(x = Race, color = SubjectInjury, fill = SubjectInjury)) +
+    theme(axis.text.x = element_text(angle = 45, vjust = .5)) +
+    labs(title = "Downtown West", x = "Race", y = "Incidents", color = "Subject Injury", fill = "Subject Injury")
+```
+```{r echo = FALSE, include=FALSE}
+police %>%
+  filter(Race %in% c("Black", "White")) %>%
+  ggplot() +
+    geom_bar(aes(x = Race, color = SubjectInjury, fill = SubjectInjury)) +
+    theme(axis.text.x = element_text(angle = 45, vjust = .5)) +
+    labs(x = "Race", y = "Cases", color = "Injury", fill = "Injury")
+```
+
+
+Something imporant to keep in mind is that **only 19.4% of the population of Minneapolis is black** ^["U.S. Census website". United States Census Bureau. July 1, 2019.]. So it's obvious that a African Americans are disproportionately represented in the data.
+
+```{r, echo=FALSE, message=FALSE}
+#The following graphic breaks down the cases by the problem that instigated the police to use force
+police %>%
+  group_by(Problem) %>%
+  summarize(n=n()) %>%
+  arrange(desc(n)) %>%
+  slice(1:5) %>%
+  ggplot() +
+    geom_col(aes(x = reorder(Problem, -n), y = n)) +
+    theme(axis.text.x = element_text(angle = 45, vjust = .5)) +
+    labs(x = "Problem", y = "Cases")
+```
+
+
+
 
 The following graphic breaks it down by the neighborhood in which the incident took place.
 
@@ -160,14 +366,26 @@ police %>%
 
 So the majority of cases take place in the Downtown West neighborhood of Minneapolis, the heart of the city. Focusing on the two most represented racial groups in the most represented neighborhood, we break it down by force type.
 
-```{r echo=FALSE}
+```{r echo=FALSE, include=FALSE}
 police %>%
+  drop_na("ForceType") %>%
   filter(Neighborhood == "Downtown West", Race %in% c("Black", "White")) %>%
   ggplot() +
     geom_bar(aes(x = Race, color = ForceType, fill = ForceType)) +
     theme(axis.text.x = element_text(angle = 45, vjust = .5)) +
-    labs(x = "Race", y = "Cases", color = "Force Type", fill = "Force Type")
+    labs(title = "Downtown West", x = "Race", y = "Cases", color = "Force Type", fill = "Force Type")
 ```
+
+
+```{r echo=FALSE}
+police %>%
+  filter(Neighborhood == "Downtown West", Race %in% c("Black", "White"), ForceType %in% c("Baton", "Bodily Force", "Chemical Irritant", "Firearm", "Gun Point Display", "Improvised Weapon", "Maximal Restraint Technique", "Police K9 Bite", "Taser")) %>%
+  ggplot() +
+    geom_bar(aes(x = Race, color = ForceType, fill = ForceType)) +
+    theme(axis.text.x = element_text(angle = 45, vjust = .5)) +
+    labs(title = "Downtown West", x = "Race", y = "Cases", color = "Force Type", fill = "Force Type")
+```
+
 
 Focusing in on chemical irritants we have the following.
 
@@ -189,8 +407,21 @@ police %>%
   ggplot() +
     geom_bar(aes(x = Race, color = Is911Call, fill = Is911Call)) +
     theme(axis.text.x = element_text(angle = 45, vjust = .5)) +
-    labs(title = "Downtown West", x = "Race", y = "Incidents", color = "911 Call", fill = "911 Call")
+    labs(title = "Downtown West", x = "Race", y = "Cases", color = "911 Call", fill = "911 Call")
 ```
+
+Comparing this to the data for all Minneapolis we see that police intervening in non-911 calls with African Americans is a issue particular to Downtown West.
+
+```{r echo=FALSE}
+police %>%
+  drop_na() %>%
+  filter(Race %in% c("Black", "White"), Is911Call %in% c("No", "Yes")) %>%
+  ggplot() +
+    geom_bar(aes(x = Race, color = Is911Call, fill = Is911Call)) +
+    theme(axis.text.x = element_text(angle = 45, vjust = .5)) +
+    labs(title = "All Minneapolis", x = "Race", y = "Cases", color = "911 Call", fill = "911 Call")
+```
+
 
 
 
