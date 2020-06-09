@@ -59,7 +59,7 @@ library(ggplot2)
 ```
 
 
-Police brutality has long been an issue in the United States. The recent killing of George Floyd has again cast a spotlight on policing practices in America. We decided to study data on the use of force by police in Minneapolis. Breaking it down by race over the entire data set we have the following.
+Police brutality has long been an issue in the United States. The recent killing of George Floyd has again cast a spotlight on policing practices in America. We decided to study data on the use of force by police in Minneapolis. Breaking it down by race over the entire data set we have the following bar charts.
 
 
 ```{r, echo=FALSE, message=FALSE}
@@ -77,6 +77,22 @@ police %>%
 ```
 
 
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+police %>%
+  group_by(Problem, Race) %>%
+  summarize(n=n()) %>%
+  mutate(sum=sum(n)) %>%
+  arrange(desc(sum)) %>% filter(sum>1260) %>%
+  mutate(Race=fct_collapse(Race, Others=c("Asian", "not recorded", "Other / Mixed Race", "Unknown", "Pacific Islander", "Native American"))) %>%
+  group_by(Problem, Race) %>%
+  summarize(n=sum(n)) %>%
+  mutate(sum=sum(n)) %>%
+  ggplot() +
+  geom_col(aes(x=reorder(Problem, -n), y=n, color=Race, fill=Race))+
+  theme(axis.text.x = element_text(angle = 45, vjust = .5)) +
+  labs(title="Top 5 Problems", x = "Problem", y="Cases")
+```
 
 
 Bear in mind that **only 19.4% of the population of Minneapolis is black** ^["U.S. Census website". United States Census Bureau. July 1, 2019.], which means that police use force against black people at **over 8 times the rate** they use it against white people.
@@ -189,19 +205,4 @@ police %>%
 
 
 So the police are more likely to use stronger crowd control mace on African Americans.
-
-
-
-```{r, echo=FALSE, message=FALSE, include=FALSE}
-police %>%
-  group_by(Problem) %>%
-  summarize(n=n()) %>%
-  arrange(desc(n)) %>%
-  slice(1:5) %>%
-  ggplot() +
-    geom_col(aes(x = reorder(Problem, -n), y = n)) +
-    theme(axis.text.x = element_text(angle = 45, vjust = .5)) +
-    labs(x = "Problem", y = "Cases")
-```
-
 
