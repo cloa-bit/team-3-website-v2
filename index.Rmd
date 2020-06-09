@@ -155,19 +155,28 @@ multiplot(p1, p2,cols=2)
 ```
 
 
-We can also see that the kinds of foce the police use are different for black and white people. In particular, the police are much more likely to use chemical irritants on black people than white people.
+We can also see that the kinds of foce the police use are different for black and white people. In particular, the police are much more likely to use chemical irritants on black people than white people in Downtown West.
 
 
 ```{r echo=FALSE}
-police %>%
+p3 <- police %>%
   filter(Neighborhood == "Downtown West", Race %in% c("Black", "White"), ForceType %in% c("Baton", "Bodily Force", "Chemical Irritant", "Firearm", "Gun Point Display", "Improvised Weapon", "Maximal Restraint Technique", "Police K9 Bite", "Taser")) %>%
   ggplot() +
     geom_bar(aes(x = Race, color = ForceType, fill = ForceType)) +
     theme(axis.text.x = element_text(angle = 45, vjust = .5)) +
     labs(title = "Downtown West", x = "Race", y = "Cases", color = "Force Type", fill = "Force Type")
+
+p4 <- police %>%
+  filter(Race %in% c("Black", "White"), ForceType %in% c("Baton", "Bodily Force", "Chemical Irritant", "Firearm", "Gun Point Display", "Improvised Weapon", "Maximal Restraint Technique", "Police K9 Bite", "Taser")) %>%
+  ggplot() +
+    geom_bar(aes(x = Race, color = ForceType, fill = ForceType)) +
+    theme(axis.text.x = element_text(angle = 45, vjust = .5)) +
+    labs(title = "All Minneapolis", x = "Race", y = "Cases", color = "Force Type", fill = "Force Type")
+
+multiplot(p3, p4,cols=2)
 ```
 
-Focusing in on chemical irritants we have the following.
+Focusing in on chemical irritant use in Downtown West we have the following.
 
 ```{r, echo=FALSE}
 police %>%
