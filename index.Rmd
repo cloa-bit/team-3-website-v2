@@ -130,6 +130,7 @@ ggplot(data = data_age, mapping = aes(x = Age, y = Case, fill = Age)) +
 
 
 Something imporant to keep in mind is that **only 19.4% of the population of Minneapolis is black** ^["U.S. Census website". United States Census Bureau. July 1, 2019.]. So it's obvious that a African Americans are disproportionately represented in the data. The following graphic breaks down the cases by the problem that instigated the police to use force.
+
 ```{r, echo=FALSE, message=FALSE}
 police %>%
   group_by(Problem) %>%
@@ -142,7 +143,7 @@ police %>%
     labs(x = "Problem", y = "Cases")
 ```
 
-The following graphic breaks it down by the neighborhood in which the incident took place
+The following graphic breaks it down by the neighborhood in which the incident took place.
 
 ```{r, echo=FALSE, message=FALSE}
 police %>%
@@ -157,10 +158,7 @@ police %>%
 
 ```
 
-So the majority of cases take place in the Downtown West neighborhood of Minneapolis, the heart of the city.
-
-
-Focusing on the two most represented racial groups in the most represented neighborhood, we break it down by force type.
+So the majority of cases take place in the Downtown West neighborhood of Minneapolis, the heart of the city. Focusing on the two most represented racial groups in the most represented neighborhood, we break it down by force type.
 
 ```{r echo=FALSE}
 police %>%
@@ -173,13 +171,13 @@ police %>%
 
 Focusing in on chemical irritants we have the following.
 
-```{r echo=FALSE}
+```{r, echo=FALSE}
 police %>%
   filter(Neighborhood == "Downtown West", Race %in% c("Black", "White"), ForceType == "Chemical Irritant") %>%
   ggplot() +
     geom_bar(aes(x = Race, color = ForceTypeAction, fill = ForceTypeAction)) +
     theme(axis.text.x = element_text(angle = 45, vjust = .5)) +
-    labs(x = "Race", y = "Cases", color = "Force Type Action", fill = "Force Type Action")
+    labs(title = "Downtown West", x = "Race", y = "Cases", color = "Force Type Action", fill = "Force Type Action")
 ```
 
 So the police are more likely to use stronger crowd control mace on African Americans. The next graphic is interesting. It shows us whether the police were responding to a 911 call in the first place.
