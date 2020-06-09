@@ -1,6 +1,6 @@
 ---
 title: "More information"
-author: "My names, team mates names"
+author: "Cameron, Changhan, Chris, Sejeong"
 date: "Last updated on `r Sys.Date()`"
 output:
   html_document:
@@ -14,6 +14,10 @@ output:
 Comments in HTML are like this! 
 -->
 
-# SECTION NAME
+# DATA USED
 
-Write your "more information" section here.
+Use of force by police data:
+http://opendata.minneapolismn.gov/datasets/police-use-of-force
+
+Minneapolis Census data:
+https://www.census.gov/quickfacts/fact/table/minneapoliscityminnesota/PST045219
