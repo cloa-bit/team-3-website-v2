@@ -59,10 +59,10 @@ library(ggplot2)
 ```
 
 
-Police brutality has long been an issue in the United States. The recent killing of George Floyd has again cast a spotlight on policing practices in America. We decided to study data on the use of force by police in Minneapolis. Breaking it down by race over the entire data set we have the following bar charts.
+Police brutality has long been an issue in the United States. The recent killing of George Floyd has again cast a spotlight on policing practices in America. We decided to study data on the use of force by police in Minneapolis. Breaking it down by race over the entire data set we have the following bar chart.
 
 
-```{r, echo=FALSE, message=FALSE}
+```{r, message=FALSE}
 police %>%
   drop_na() %>%
   group_by(Race) %>%
@@ -78,21 +78,6 @@ police %>%
 
 
 
-```{r, echo=FALSE, message=FALSE, warning=FALSE}
-police %>%
-  group_by(Problem, Race) %>%
-  summarize(n=n()) %>%
-  mutate(sum=sum(n)) %>%
-  arrange(desc(sum)) %>% filter(sum>1260) %>%
-  mutate(Race=fct_collapse(Race, Others=c("Asian", "not recorded", "Other / Mixed Race", "Unknown", "Pacific Islander", "Native American"))) %>%
-  group_by(Problem, Race) %>%
-  summarize(n=sum(n)) %>%
-  mutate(sum=sum(n)) %>%
-  ggplot() +
-  geom_col(aes(x=reorder(Problem, -n), y=n, color=Race, fill=Race))+
-  theme(axis.text.x = element_text(angle = 45, vjust = .5)) +
-  labs(title="Top 5 Problems", x = "Problem", y="Cases")
-```
 
 
 Bear in mind that **only 19.4% of the population of Minneapolis is black** ^["U.S. Census website". United States Census Bureau. July 1, 2019.], which means that police use force against black people at **over 8 times the rate** they use it against white people.
@@ -132,12 +117,33 @@ ggplot(data = total_yr, mapping = aes(x=Year)) +
   xlab("Year") + ylab("Cases") +
   ggtitle("Police Use of Force 2008-2018", "MPD Cases by Race")
 ```
-Since the death of George Floyd, this dataset has gotten a lot of attention.  In particular, this NY Times article provides some great graphics about the use-of-force statistics for Minneapolis as a whole:
+
+When we examine the stated reasons for these altercations, we see that the top category--suspicious person--disproportionately includes black people.
+
+```{r message=FALSE, warning=FALSE}
+police %>%
+  group_by(Problem, Race) %>%
+  summarize(n=n()) %>%
+  mutate(sum=sum(n)) %>%
+  arrange(desc(sum)) %>% filter(sum>1260) %>%
+  mutate(Race=fct_collapse(Race, Others=c("Asian", "not recorded", "Other / Mixed Race", "Unknown", "Pacific Islander", "Native American"))) %>%
+  group_by(Problem, Race) %>%
+  summarize(n=sum(n)) %>%
+  mutate(sum=sum(n)) %>%
+  ggplot() +
+  geom_col(aes(x=reorder(Problem, -n), y=n, color=Race, fill=Race))+
+  theme(axis.text.x = element_text(angle = 45, vjust = .5)) +
+  labs(title="Top 5 Problems", x = "Problem", y="Cases")
+```
+
+
+
+All of this information about Minneapolis in general has been discussed extensively in the media since the murder of George Floyd.  In particular, this NY Times article provides some great graphics about the use-of-force statistics for Minneapolis as a whole:
 
 https://www.nytimes.com/interactive/2020/06/03/us/minneapolis-police-use-of-force.html
 
 However, as the following barplot shows, these incidents are not spread evenly over the city.  An enormous number of these police altercations take place in Minneapolis's downtown district:
-```{r, echo=FALSE, message=FALSE}
+```{r message=FALSE}
 police %>%
   group_by(Neighborhood) %>%
   summarize(n=n()) %>%
@@ -153,7 +159,7 @@ Focusing on the Downtown West district shows some very distinct trends.
 
 In this first plot we see that while 911 calls to the police result in use-of-force in similar numbers for black and white people, police are far more likely to use force against black people *without* being called in Downtown West. We compare this with the data for all Minneapolis.
 
-```{r echo=FALSE}
+```{r}
 p1 <-police %>%
   filter(Neighborhood == "Downtown West", Race %in% c("Black", "White")) %>%
   ggplot() +
@@ -174,7 +180,7 @@ multiplot(p1, p2,cols=2)
 We can also see that the kinds of foce the police use are different for black and white people. In particular, the police are much more likely to use chemical irritants on black people than white people in Downtown West.
 
 
-```{r echo=FALSE}
+```{r}
 p3 <- police %>%
   filter(Neighborhood == "Downtown West", Race %in% c("Black", "White"), ForceType %in% c("Baton", "Bodily Force", "Chemical Irritant", "Firearm", "Gun Point Display", "Improvised Weapon", "Maximal Restraint Technique", "Police K9 Bite", "Taser")) %>%
   ggplot() +
@@ -194,7 +200,7 @@ multiplot(p3, p4,cols=2)
 
 Focusing in on chemical irritant use in Downtown West we have the following.
 
-```{r, echo=FALSE}
+```{r}
 police %>%
   filter(Neighborhood == "Downtown West", Race %in% c("Black", "White"), ForceType == "Chemical Irritant") %>%
   ggplot() +
