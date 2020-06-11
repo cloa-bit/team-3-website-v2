@@ -14,7 +14,7 @@ output:
     self_contained: no
 # All fa icons were obtained from https://fontawesome.com/icons?d=gallery
 navbar:
-  title: "Final Project Title"
+  title: "Team 3 Final Project"
   left:
     - text: "Blogpost"
       href: index.html
