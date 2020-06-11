@@ -1,0 +1,54 @@
+---
+title: "team3proj1"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+Setting up libraries:
+
+```{r}
+library(ggplot2)
+library(tidyverse)
+library(dplyr)
+```
+We import the file "aiddata_countries_only.csv", which gives information about foreign aid donated from the 1970's to the 2010's.  
+
+Using this data, we create a grph which shows how worldwide aid has changed during that period.
+
+```{r}
+setwd("/cloud/project/Day2_MiniProject01-Visualize-Transform-AidData/1_Data")
+aiddata_countries_only = read.csv("aiddata-countries-only.csv")
+
+aiddata_countries_only %>%
+  group_by(year) %>%
+  summarize(total_donated=sum(commitment_amount_usd_constant)) %>%
+  ggplot() +
+  geom_line(aes(x=year, y=total_donated))
+```
+This graphic shows the total worldwide aid donated as a function of time.  We can see that the levels have been largely constant, with a spike in the 1990's. 
+
+We can break this data down further and see how donations from each nation have fluctuated over time.  Since there are many nations in this dataset, we will focus on only the top 10 contributors.  
+
+```{r}
+total_per_country = aiddata_countries_only %>% 
+  group_by(donor) %>% 
+  summarise(total_donated = sum(commitment_amount_usd_constant)) %>% 
+  arrange(desc(total_donated)) %>% 
+  slice(1:10)
+
+most_don = total_per_country[,1]
+```
+
+Now that we have identified the top 10 contributors, we can see how their portions have fluctuated over time.  
+
+```{r}
+aiddata_countries_only %>%
+  filter(donor %in% unlist(most_don)) %>% 
+  group_by(year, donor) %>%
+  summarize(donor=donor, total_donated=sum(commitment_amount_usd_constant)) %>%
+  ggplot() +
+  geom_line(aes(x=year, y=total_donated, color=donor))
+```
+
